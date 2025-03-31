@@ -93,6 +93,9 @@ load_globalsettings() {
     }
     IS_Read(&globalsettings, 1, sizeof(globalsettings), gsFile);
     IS_Close(gsFile);
+#ifdef __ANDROID__
+    globalsettings.opt_fullscreen = 1;
+#endif
 
     vid_reset_settings();
 }

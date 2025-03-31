@@ -769,9 +769,11 @@ int32 intro_screen()
 						break;
 
                         case 7:
+#ifndef __ANDROID__
                         globalsettings.opt_fullscreen = !globalsettings.opt_fullscreen;
                         // needed to flip the fullscreen flag internally.
                         vid_reset_settings();
+#endif
                         break;
 
 					    case 8:
@@ -960,8 +962,10 @@ int32 intro_screen()
 				ik_dsprite(screen, bx+16, by+y-5, spr_IFbutton->spr[(settings.opt_mucrontext & 2)/2], 2+(MAIN_INTERFACE_COLOR<<8));
 
                 y+=16;
+#ifndef __ANDROID__
                 ik_print(screen, font_6x8, bx+32, by+y, MAIN_INTERFACE_COLOR, "RUN IN FULLSCREEN");
                 ik_dsprite(screen, bx+16, by+y-5, spr_IFbutton->spr[globalsettings.opt_fullscreen], 2+(MAIN_INTERFACE_COLOR<<8));
+#endif
 
                 y+=16;
                 ik_print(screen, font_6x8, bx+32, by+y, MAIN_INTERFACE_COLOR, "PIXEL PERFECT SCALING");

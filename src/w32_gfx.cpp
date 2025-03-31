@@ -53,6 +53,7 @@ int movrecord = 1;
 int sdl_x_offset = 0;
 int sdl_y_offset = 0;
 float sdl_screen_scale = 1.0f;
+// extern t_ik_font			 *font_6x8;
 
 void gfx_refresh_screen() {
     int outw,outh,inw,inh,render_offx,render_offy;
@@ -83,6 +84,17 @@ void gfx_refresh_screen() {
     // and the second time to get the equivalent input transform information.
 
     sdl_screen_scale = render_scale * static_cast<float>(inw) / static_cast<float>(outw);
+    // if(screen && font_6x8) {
+    //     ik_print(screen, font_6x8, 0, 0, 0, "render_scale=%f    sdl_screen_scale=%f", render_scale, sdl_screen_scale);
+    //     ik_print(screen, font_6x8, 0, 8, 0, "surf is %dx%d", sdlsurf->w, sdlsurf->h);
+    //     int inwpx, inhpx;
+    //     SDL_GetWindowSizeInPixels(sdlWind, &inwpx, &inhpx);
+    //     ik_print(screen, font_6x8, 0, 16, 0, "win is %dx%d    winpx is %dx%d", inw, inh, inwpx, inhpx);
+    //     ik_print(screen, font_6x8, 0, 24, 0, "out is %dx%d", outw, outh);
+    //     int glw, glh;
+    //     SDL_GL_GetDrawableSize(sdlWind, &glw, &glh);
+    //     ik_print(screen, font_6x8, 0, 32, 0, "gl is %dx%d", glw, glh);
+    // }
 
     int targetXSize = static_cast<int>(sdlsurf->w * sdl_screen_scale);
     int targetYSize = static_cast<int>(sdlsurf->h * sdl_screen_scale);
