@@ -1,0 +1,9 @@
+[submodule "android/app/jni/SDL"]
+	path = android/app/jni/SDL
+	url = https://github.com/libsdl-org/SDL
+[submodule "android/app/jni/SDL_mixer"]
+	path = android/app/jni/SDL_mixer
+	url = https://github.com/libsdl-org/SDL_mixer
+[submodule "android/app/jni/physfs"]
+	path = android/app/jni/physfs
+	url = https://github.com/icculus/physfs

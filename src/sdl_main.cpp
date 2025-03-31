@@ -121,7 +121,16 @@ int main(int argc, char *argv[]) {
     c_maxx = gfx_width;
     c_maxy = gfx_height;
 
-    if (!PHYSFS_init(argv[0])) {
+#ifdef __ANDROID__
+    PHYSFS_AndroidInit androidInit = {
+        .jnienv = SDL_AndroidGetJNIEnv(),
+        .context = SDL_AndroidGetActivity(),
+    };
+#define argv0ForPhysFS (reinterpret_cast<const char *>(&androidInit))
+#else
+#define argv0ForPhysFS (argv[0])
+#endif
+    if (!PHYSFS_init(argv0ForPhysFS)) {
         auto physfsErr = PHYSFS_getLastErrorCode();
         SYS_abort("PhysFS failed to initialise: %s", PHYSFS_getErrorByCode(physfsErr));
     }
@@ -148,6 +157,21 @@ int main(int argc, char *argv[]) {
 #endif
     if (!PHYSFS_mount(resourcePath.c_str(), "/", 1)) {
         SYS_abort("Failed to mount data archive \"%s\": %s", resourcePath.c_str(), PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+    }
+#elif defined(__ANDROID__)
+    const char *externalDir = SDL_AndroidGetExternalStoragePath();
+    const char *baseDir = PHYSFS_getBaseDir();
+    if(!PHYSFS_mount(externalDir, "/", 0)) {
+        SYS_abort("Failed to mount write directory \"%s\": %s", externalDir, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+    }
+    if(!PHYSFS_setWriteDir(externalDir)) {
+        SYS_abort("Failed to set write directory to \"%s\": %s", externalDir, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+    }
+    if(!PHYSFS_mount(baseDir, "/", 1)) {
+        SYS_abort("Failed to mount data archive \"%s\": %s", baseDir, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+    }
+    if(!PHYSFS_setRoot(baseDir, "/assets")) {
+        SYS_abort("Failed to set root for data archive \"%s\": %s", baseDir, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
     }
 #else
     if (!PHYSFS_setSaneConfig("FreeSAIS", "SAIS", "zip", 0, 0)) {
@@ -198,7 +222,7 @@ int main(int argc, char *argv[]) {
     }
 
     // create the intermediate blitting surface (needed for fullscreen support)
-    blitIntermedSurf = SDL_CreateRGBSurfaceWithFormat(0, 640, 480, 32, SDL_PIXELFORMAT_RGBA8888);
+    blitIntermedSurf = SDL_CreateRGBSurfaceWithFormat(0, 640, 480, 32, SDL_PIXELFORMAT_RGBA32);
     if (blitIntermedSurf == nullptr) {
         SYS_abort("Failed to create intermediate target surface: %s", SDL_GetError());
     }
@@ -208,5 +232,8 @@ int main(int argc, char *argv[]) {
     vid_reset_settings();
 
     my_main();
+#ifdef __ANDROID__
+    exit(0); // HACK to get game to start correctly next time
+#endif
     return 0;
 }
