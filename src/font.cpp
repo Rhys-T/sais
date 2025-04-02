@@ -18,6 +18,7 @@
 #include <cstdlib>
 #include <cstdarg>
 #include <cstring>
+#include <SDL.h>
 
 #include "Typedefs.h"
 #include "iface_globals.h"
@@ -193,6 +194,17 @@ void ik_text_input(int x, int y, int l, t_ik_font *fnt, const char *pmt, char *t
 	start_ik_timer(3, 500); 
 	t=0;ot=0;
 
+	SDL_Rect textRect = {
+		x,
+		y,
+		fnt->w*l,
+		fnt->h
+	};
+	SDL_SetTextInputRect(&textRect);
+	// SDL_bool wasTextActive = SDL_IsTextInputActive();
+	// if(!wasTextActive) {
+		SDL_StartTextInput();
+	// }
 	while (!end)
 	{
 		ik_eventhandler();  // always call every frame
@@ -233,6 +245,9 @@ void ik_text_input(int x, int y, int l, t_ik_font *fnt, const char *pmt, char *t
 			upd=0;
 		}
 	}
+	// if(!wasTextActive) {
+		SDL_StopTextInput();
+	// }
 
 	prep_screen();
 	ik_drawbox(screen, x, y, x+fnt->w*l-1, y+fnt->h-1, 0);
